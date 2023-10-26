@@ -1,6 +1,6 @@
+use cidr::IpCidr;
 use divan::counter::ItemsCount;
 use divan::Bencher;
-use ipnetwork::IpNetwork;
 use rand::random;
 use std::net::IpAddr;
 
@@ -144,8 +144,32 @@ fn main() {
 }
 
 #[divan::bench(min_time = 1)]
-fn vec_iter(bencher: Bencher) {
-    let cidrs: Vec<IpNetwork> = CIDRS.iter().map(|s| s.parse().unwrap()).collect();
+fn cidr_vec_iter(bencher: Bencher) {
+    let cidrs: Vec<IpCidr> = CIDRS.iter().map(|s| s.parse().unwrap()).collect();
+
+    bencher
+        .counter(ItemsCount::new(1usize))
+        .with_inputs(|| IpAddr::from([random(), random(), random(), random()]))
+        .bench_values(|ip| {
+            cidrs
+                .iter()
+                .any(|trusted_proxy| trusted_proxy.contains(&ip))
+        })
+}
+
+#[divan::bench(min_time = 1)]
+fn ipnetwork_vec_iter(bencher: Bencher) {
+    let cidrs: Vec<ipnetwork::IpNetwork> = CIDRS.iter().map(|s| s.parse().unwrap()).collect();
+
+    bencher
+        .counter(ItemsCount::new(1usize))
+        .with_inputs(|| IpAddr::from([random(), random(), random(), random()]))
+        .bench_values(|ip| cidrs.iter().any(|trusted_proxy| trusted_proxy.contains(ip)))
+}
+
+#[divan::bench(min_time = 1)]
+fn ip_network_vec_iter(bencher: Bencher) {
+    let cidrs: Vec<ip_network::IpNetwork> = CIDRS.iter().map(|s| s.parse().unwrap()).collect();
 
     bencher
         .counter(ItemsCount::new(1usize))

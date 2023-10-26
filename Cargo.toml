@@ -8,8 +8,10 @@ edition = "2021"
 [dependencies]
 
 [dev-dependencies]
+cidr = "=0.2.2"
 divan = "=0.1.1"
 ipnetwork = "=0.20.0"
+ip_network = "=0.4.1"
 rand = "=0.8.5"
 
 [[bench]]
