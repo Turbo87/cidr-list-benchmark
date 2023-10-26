@@ -15,6 +15,21 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "327762f6e5a765692301e5bb513e0d9fef63be86bbc14528052b1cd3e6f03e07"
 
 [[package]]
+name = "bitstring"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "22a39c0db600cfe77ef1b6d9ea71173bdccf190722877969d526d380519b6ecc"
+
+[[package]]
+name = "bitstring-trees"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5f819939b1b1a7dff5a92075e27e82e3d8df09492b56143bebe4e41fdf415419"
+dependencies = [
+ "bitstring",
+]
+
+[[package]]
 name = "cfg-if"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -25,11 +40,15 @@ name = "cidr"
 version = "0.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8d18b093eba54c9aaa1e3784d4361eb2ba944cf7d0a932a830132238f483e8d8"
+dependencies = [
+ "bitstring",
+]
 
 [[package]]
 name = "cidr-list-benchmark"
 version = "0.1.0"
 dependencies = [
+ "bitstring-trees",
  "cidr",
  "divan",
  "ip_network",

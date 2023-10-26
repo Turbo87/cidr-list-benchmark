@@ -1,4 +1,5 @@
-use cidr::IpCidr;
+use bitstring_trees::set::RadixSet;
+use cidr::{AnyIpCidr, IpCidr};
 use divan::counter::ItemsCount;
 use divan::Bencher;
 use rand::random;
@@ -151,6 +152,24 @@ fn cidr_vec_iter(bencher: Bencher) {
         .counter(ItemsCount::new(1usize))
         .with_inputs(|| IpAddr::from([random(), random(), random(), random()]))
         .bench_values(|ip| {
+            cidrs
+                .iter()
+                .any(|trusted_proxy| trusted_proxy.contains(&ip))
+        })
+}
+
+#[divan::bench(min_time = 1)]
+fn cidr_bitstring_tree(bencher: Bencher) {
+    let mut cidrs = RadixSet::new();
+    for s in CIDRS {
+        cidrs.insert(s.parse::<AnyIpCidr>().unwrap());
+    }
+
+    bencher
+        .counter(ItemsCount::new(1usize))
+        .with_inputs(|| IpAddr::from([random(), random(), random(), random()]))
+        .bench_values(|ip| {
+            // TODO this seems wrong. how do you use this correctly?!
             cidrs
                 .iter()
                 .any(|trusted_proxy| trusted_proxy.contains(&ip))
