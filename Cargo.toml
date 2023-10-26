@@ -13,6 +13,7 @@ cidr = { version = "=0.2.2", features = ["bitstring"] }
 divan = "=0.1.1"
 ipnetwork = "=0.20.0"
 ip_network = "=0.4.1"
+ip_network_table = "=0.2.0"
 rand = "=0.8.5"
 
 [[bench]]

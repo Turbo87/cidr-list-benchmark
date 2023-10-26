@@ -2,6 +2,7 @@ use bitstring_trees::set::RadixSet;
 use cidr::{AnyIpCidr, IpCidr};
 use divan::counter::ItemsCount;
 use divan::Bencher;
+use ip_network_table::IpNetworkTable;
 use rand::random;
 use std::net::IpAddr;
 
@@ -174,6 +175,19 @@ fn cidr_bitstring_tree(bencher: Bencher) {
                 .iter()
                 .any(|trusted_proxy| trusted_proxy.contains(&ip))
         })
+}
+
+#[divan::bench(min_time = 1)]
+fn ip_network_table(bencher: Bencher) {
+    let mut cidrs = IpNetworkTable::new();
+    for s in CIDRS {
+        cidrs.insert(s.parse::<ip_network::IpNetwork>().unwrap(), ());
+    }
+
+    bencher
+        .counter(ItemsCount::new(1usize))
+        .with_inputs(|| IpAddr::from([random(), random(), random(), random()]))
+        .bench_values(|ip| cidrs.matches(ip).next().is_some())
 }
 
 #[divan::bench(min_time = 1)]
